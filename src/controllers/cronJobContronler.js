@@ -130,13 +130,33 @@ function generateUniqueID() {
                 }
             });
             // Log the entire API response to debug the structure
-            console.log('API Response:', response.data);
+            // console.log('API Response:', response.data);
             const data = response.data;
             // Extract required fields from the API response
             const block = data.BlockHeight;
             const hash = data.Hash;
             const result = data.result;
-            const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
+            // const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
+            // Get the current local time in the desired format
+ // Get the current local time, subtract 3 seconds, and create a new Date object
+ const currentTime = new Date();
+ const adjustedTime = new Date(currentTime.getTime() - 3000);
+
+ // Get the local time in the desired format
+ const time = adjustedTime.toLocaleString('en-GB', {
+     year: 'numeric',
+     month: '2-digit',
+     day: '2-digit',
+     hour: '2-digit',
+     minute: '2-digit',
+     second: '2-digit'
+ }).replace(',', '');
+
+ // Format the time string to match "YYYY-MM-DD HH:MM:SS"
+ const formattedTime = time.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s(\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
+
+
+            console.log("time is ....",formattedTime)
             const bigsmall = result <= 4 ? 'small' : 'big';
             const status = 1;
             const singleType = 1;
@@ -144,7 +164,7 @@ function generateUniqueID() {
             const uniqueID = generateUniqueID();
             // console.log("uniqueId .....",uniqueID)
             const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-            const values = [uniqueID, block, hash, result, bigsmall, time, status, singleType]; // Assuming period can be null or auto-increment
+            const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
             // Execute the query and handle potential errors
             connection.query(query, values, (err, results) => {
                 if (err) {
@@ -235,7 +255,7 @@ function generateUniqueID() {
                 // Return the modified item
                 return item;
               });
-            console.log("trxdata...", trxdataFiveMinute)
+            // console.log("trxdata...", trxdataFiveMinute)
             io.emit('data-server-trxFiveMinute', { data: trxdataFiveMinute });
             const [trxgetperiod] = await connection.execute('SELECT * FROM trx WHERE type = 3 ORDER BY id DESC LIMIT 1', []);
             console.log("trxgetperiod...",trxgetperiod[0].period);
