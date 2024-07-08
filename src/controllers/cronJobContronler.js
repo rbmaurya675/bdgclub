@@ -154,8 +154,6 @@ function generateUniqueID() {
 
  // Format the time string to match "YYYY-MM-DD HH:MM:SS"
  const formattedTime = time.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s(\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
-
-
             console.log("time is ....",formattedTime)
             const bigsmall = result <= 4 ? 'small' : 'big';
             const status = 1;
