@@ -758,7 +758,7 @@
                 <div class="info" style="padding: none;">
 
                   <!-- <div data-v-a9660e98="" class="trxnumber">0000000000000</div> -->
-                   <h2 class="trxnumber">0000000000000</h2>
+                  <h2 class="trxnumber">0000000000000</h2>
                 </div>
                 Trx Go 1Min
               </div>
@@ -1023,11 +1023,11 @@
               <!-- use api and display all data here -->
               <ul style="color: red" id="trx-data-list">
                 <!-- Data will be dynamically inserted here -->
-            </ul>
+              </ul>
 
               <!-- <div data-v-a9660e98="" class="hb"></div> -->
               <!-- <script src="/socket.io/socket.io.js"></script> -->
-<!-- <script>
+              <!-- <script>
     // const socket = io();
 
     socket.on('data-server-trx', function (data) {
@@ -2155,63 +2155,63 @@
 </html>
 <script>
   socket.on('data-server-trx', function (data) {
-      console.log('Received data:', data);
+    console.log('Received data:', data);
 
-      // Assuming data is an array of objects
-      const dataArray = data.data;
+    // Assuming data is an array of objects
+    const dataArray = data.data;
 
-      // Clear previous data
-      const trxDataList = document.getElementById('trx-data-list');
-      trxDataList.innerHTML = '';
+    // Clear previous data
+    const trxDataList = document.getElementById('trx-data-list');
+    trxDataList.innerHTML = '';
 
-      // Iterate over the array and create list items
-      dataArray.forEach(item => {
-          // Format the hash to include ***
-          const formattedHash = `***${item.hash.slice(-4)}`;
-          
-          // Format the period as required
-          const formattedPeriod = `202**${item.period.toString().slice(-4)}`;
-          
-          // Determine if result is big or small
-          const isBig = item.bigsmall === 'big';
-          const resultValue = isBig ? 'B' : 'S';
-          
-          // Create circular badge style for result
-          const resultStyle = `
+    // Iterate over the array and create list items
+    dataArray.forEach(item => {
+      // Format the hash to include ***
+      const formattedHash = `***${item.hash.slice(-4)}`;
+
+      // Format the period as required
+      const formattedPeriod = `202**${item.period.toString().slice(-4)}`;
+
+      // Determine if result is big or small
+      const isBig = item.bigsmall === 'big';
+      const resultValue = isBig ? 'B' : 'S';
+
+      // Create circular badge style for result
+      const resultStyle = `
               display: inline-block;
-              width: 30px;
-              height: 30px;
-              line-height: 30px;
+              width: 20px;
+              height: 20px;
+              line-height: 20px;
               text-align: center;
               border-radius: 50%;
               background-color: ${isBig ? '#28a745' : '#dc3545'}; /* Green for big, Red for small */
               color: white;
               font-size: 14px;
           `;
-          
-          // Create list item with inline styles
-          const li = document.createElement('li');
-          li.style.marginBottom = '10px'; // Example inline style
-          
-          // Construct HTML content for the list item with inline styles
-          li.innerHTML = `
+
+      // Create list item with inline styles
+      const li = document.createElement('li');
+      li.style.marginBottom = '10px'; // Example inline style
+
+      // Construct HTML content for the list item with inline styles
+      li.innerHTML = `
               <div class="wrap" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ccc;">
                   <div class="c-tc van-row" style="display: flex; flex-wrap: nowrap;">
-                      <div class="van-col van-col--6" style="padding-right: 10px; padding-left: 10px;">${formattedPeriod}</div>
-                      <div class="van-col van-col--5" style="padding-right: 10px; padding-left: 10px;">${item.block}</div>
-                      <div class="van-col van-col--5" style="padding-right: 10px; padding-left: 10px;">${item.time}</div>
-                      <div class="van-col van-col--4" style="padding-right: 10px; padding-left: 10px;">${formattedHash}</div>
-                      <div class="van-col van-col--4" style="padding-right: 10px; padding-left: 10px;">
+                      <div class="van-col van-col--6" style="padding-right: 10px; padding-left: 10px;color:black;">${formattedPeriod}</div>
+                      <div class="van-col van-col--5" style="padding-right: 10px; padding-left: 10px;color:black;">${item.block}</div>
+                      <div class="van-col van-col--5" style="padding-right: 10px; padding-left: 10px;color:black;">${item.time}</div>
+                      <div class="van-col van-col--4" style="padding-right: 10px; padding-left: 10px;color:black;">${formattedHash}</div>
+                      <div class="van-col van-col--4" style="padding-right: 10px; padding-left: 10px;color:black;">
                           <span style="${resultStyle}">${item.result}</span>
                       </div>
-                      <div class="van-col van-col--2" style="padding-right: 10px;">${resultValue}</div>
+                      <div class="van-col van-col--2" style="padding-right: 10px;color:black;">${resultValue}</div>
                   </div>
               </div>
           `;
-          
-          // Append the list item to the UL
-          trxDataList.appendChild(li);
-      });
+
+      // Append the list item to the UL
+      trxDataList.appendChild(li);
+    });
   });
 </script>
 <!-- working below -->
@@ -2277,12 +2277,12 @@
 </script>
 <script>
   socket.on('data-server-trx-get-period', function (data) {
-      console.log('Period Received data:', data);
-      
-      // Update the DOM element with the received period data
-      const periodElement = document.querySelector('.trxnumber');
-      if (periodElement) {
-          periodElement.textContent = data.data; // Assuming data is like { data: 202407042044 }
-      }
+    console.log('Period Received data:', data);
+
+    // Update the DOM element with the received period data
+    const periodElement = document.querySelector('.trxnumber');
+    if (periodElement) {
+      periodElement.textContent = data.data; // Assuming data is like { data: 202407042044 }
+    }
   });
 </script>
