@@ -160,7 +160,6 @@ function generateUniqueID() {
     ////////
     cron.schedule('*/3 * * * *', async () => {
         try {
-            console.log("cron job working 3 .........")
             const [trxgetData] = await connection.execute('SELECT * FROM trx WHERE type = 2 ORDER BY id DESC LIMIT 10', []);
             const trxdataThreeMinute = trxgetData.map(item => {
                 // Update hash to show only the last 6 characters
@@ -176,15 +175,75 @@ function generateUniqueID() {
                 // Return the modified item
                 return item;
               });
-            console.log("trxdata...", trxdataThreeMinute)
             io.emit('data-server-trxThreeMinute', { data: trxdataThreeMinute });
             const [trxgetperiod] = await connection.execute('SELECT * FROM trx WHERE type = 2 ORDER BY id DESC LIMIT 1', []);
-            console.log("trxgetperiod...",trxgetperiod[0].period);
             const trxPeriodData=trxgetperiod[0].period +1;
             // console.log("trx period data with + 1 value ....",trxPeriodData)
             io.emit('data-server-trxThreeMinute-get-period', { data: trxPeriodData });
             await sleep(56000);
             const latestBlock = await fetchLatestBlock(2, 60);
+            // console.log("Latest block DATA IS ..:", latestBlock);
+            
+            console.log(".................");
+
+            const response = await axios.get('https://codunia.com/trx.php', {
+                params: {
+                    blockNumber: latestBlock
+                }
+            });
+            const data = response.data;
+            // Extract required fields from the API response
+            const block = data.BlockHeight;
+            const hash = data.Hash;
+            const result = data.result;
+            const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
+            const bigsmall = result <= 4 ? 'small' : 'big';
+            const status = 1;
+            const singleType = 2;
+            // SQL query to insert data
+            const uniqueID = generateUniqueID();
+            const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            const values = [uniqueID, block, hash, result, bigsmall, time, status, singleType]; // Assuming period can be null or auto-increment
+            // Execute the query and handle potential errors
+            connection.query(query, values, (err, results) => {
+                if (err) {
+                    console.error('Error inserting data:', err);
+                    return;
+                }
+                console.log('Data inserted:', results.insertId);
+            });
+        } catch (error) {
+            console.error('Error fetching data from API:', error);
+        }
+    });
+
+    cron.schedule('*/5 * * * *', async () => {
+        try {
+            console.log("cron job working 5 .........")
+            const [trxgetData] = await connection.execute('SELECT * FROM trx WHERE type = 3 ORDER BY id DESC LIMIT 10', []);
+            const trxdataFiveMinute = trxgetData.map(item => {
+                // Update hash to show only the last 6 characters
+                item.hash = item.hash.slice(-4);
+              
+                // Update time to show only the time part (HH:mm:ss)
+                item.time = item.time.split(' ')[1];
+              
+                // Format period field as per your requirement
+                const formattedPeriod = `202**${item.period.toString().slice(-4)}`;
+                item.period = formattedPeriod;
+              
+                // Return the modified item
+                return item;
+              });
+            console.log("trxdata...", trxdataFiveMinute)
+            io.emit('data-server-trxFiveMinute', { data: trxdataFiveMinute });
+            const [trxgetperiod] = await connection.execute('SELECT * FROM trx WHERE type = 3 ORDER BY id DESC LIMIT 1', []);
+            console.log("trxgetperiod...",trxgetperiod[0].period);
+            const trxPeriodData=trxgetperiod[0].period +1;
+            // console.log("trx period data with + 1 value ....",trxPeriodData)
+            io.emit('data-server-trxFiveMinute-get-period', { data: trxPeriodData });
+            await sleep(56000);
+            const latestBlock = await fetchLatestBlock(3, 100);
             // console.log("Latest block DATA IS ..:", latestBlock);
             
             console.log(".................");
@@ -204,7 +263,7 @@ function generateUniqueID() {
             const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
             const bigsmall = result <= 4 ? 'small' : 'big';
             const status = 1;
-            const singleType = 2;
+            const singleType = 3;
             // SQL query to insert data
             const uniqueID = generateUniqueID();
             console.log("uniqueId .....",uniqueID)
@@ -222,84 +281,7 @@ function generateUniqueID() {
             console.error('Error fetching data from API:', error);
         }
     });
-
-
-    // cron.schedule('*/3 * * * ', async () => {
-    //     try {
-    //         await sleep(176000);
-    //         const latestBlock = await fetchLatestBlock(2, 60);
-    //         console.log("Latest block DATA IS ..:", latestBlock);
-    //         console.log(".................");
-
-    //         const response = await axios.get('https://codunia.com/trx.php', {
-    //             params: {
-    //                 blockNumber: latestBlock
-    //             }
-    //         });
-    //         // Log the entire API response to debug the structure
-    //         console.log('API Response:', response.data);
-    //         const data = response.data;
-    //         // Extract required fields from the API response
-    //         const block = data.BlockHeight;
-    //         const hash = data.Hash;
-    //         const result = data.result;
-    //         const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
-    //         const bigsmall = result <= 4 ? 'small' : 'big';
-    //         const status = 1;
-    //         const doubletype = 2;
-    //         // SQL query to insert data
-    //         const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    //         const values = ['22', block, hash, result, bigsmall, time, status, doubletype]; // Assuming period can be null or auto-increment
-    //         // Execute the query and handle potential errors
-    //         connection.query(query, values, (err, results) => {
-    //             if (err) {
-    //                 console.error('Error inserting data:', err);
-    //                 return;
-    //             }
-    //             console.log('Data inserted:', results.insertId);
-    //         });
-    //     } catch (error) {
-    //         console.error('Error fetching data from API:', error);
-    //     }
-    // });
-    // cron.schedule('*/5 * * * *', async () => {
-    //     try {
-    //         await sleep(296000);
-    //         const latestBlock = await fetchLatestBlock(3, 100);
-    //         console.log("Latest block DATA IS ..:", latestBlock);
-    //         console.log(".................");
-
-    //         const response = await axios.get('https://codunia.com/trx.php', {
-    //             params: {
-    //                 blockNumber: latestBlock
-    //             }
-    //         });
-    //         // Log the entire API response to debug the structure
-    //         console.log('API Response:', response.data);
-    //         const data = response.data;
-    //         // Extract required fields from the API response
-    //         const block = data.BlockHeight;
-    //         const hash = data.Hash;
-    //         const result = data.result;
-    //         const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
-    //         const bigsmall = result <= 4 ? 'small' : 'big';
-    //         const status = 1;
-    //         const threeType = 3
-    //         // SQL query to insert data
-    //         const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    //         const values = ['22', block, hash, result, bigsmall, time, status, threeType]; // Assuming period can be null or auto-increment
-    //         // Execute the query and handle potential errors
-    //         connection.query(query, values, (err, results) => {
-    //             if (err) {
-    //                 console.error('Error inserting data:', err);
-    //                 return;
-    //             }
-    //             console.log('Data inserted:', results.insertId);
-    //         });
-    //     } catch (error) {
-    //         console.error('Error fetching data from API:', error);
-    //     }
-    // });
+    
     // cron.schedule('*/10 * * * ', async () => {
     //     try {
     //         await sleep(596000);
