@@ -20,57 +20,57 @@
   <link rel="stylesheet" href="/css/admin.css">
   <script src="/socket.io/socket.io.js"></script>
   <script>
-      // Connect to Socket.IO server
-      const socket = io();
+    // Connect to Socket.IO server
+    const socket = io();
 
-      // Listen for 'data-server-trx-three-secound' event
-      socket.on('data-server-trx-three-secound', (data) => {
-          const trxdata = data.data;
-          updateTable(trxdata);
-      });
+    // Listen for 'data-server-trx-three-secound' event
+    socket.on('data-server-trx-three-secound', (data) => {
+        const trxdata = data.data;
+        console.log("Listening data as...", trxdata);
+        updateTable(trxdata);
+    });
 
-      // Function to update the table with new data
-      function updateTable(trxdata) {
-          const listOrders = document.getElementById('list-orders');
-          listOrders.innerHTML = ''; // Clear existing data
+    // Function to update the table with new data
+    function updateTable(trxdata) {
+        const listOrders = document.getElementById('list-orders');
+        listOrders.innerHTML = ''; // Clear existing data
 
-          trxdata.forEach(item => {
-              const row = document.createElement('div');
-              row.classList.add('c-tc', 'van-row');
-              row.style.textAlign = 'center';
-              row.style.borderBottom = '1px solid';
-              row.style.padding = '6px';
+        trxdata.forEach(item => {
+            const row = document.createElement('div');
+            row.classList.add('c-tc', 'van-row');
+            row.style.textAlign = 'center';
+            row.style.borderBottom = '1px solid';
+            row.style.padding = '6px';
 
-              const hashCol = document.createElement('div');
-              hashCol.classList.add('van-col', 'van-col--7');
-              hashCol.textContent = item.period;
-              row.appendChild(hashCol);
+            const periodCol = document.createElement('div');
+            periodCol.classList.add('van-col', 'van-col--7');
+            periodCol.textContent = item.period;
+            row.appendChild(periodCol);
 
-              const timeCol = document.createElement('div');
-              timeCol.classList.add('van-col', 'van-col--5');
-              timeCol.textContent = item.result;
-              row.appendChild(timeCol);
+            const resultCol = document.createElement('div');
+            resultCol.classList.add('van-col', 'van-col--5');
+            resultCol.textContent = item.result;
+            row.appendChild(resultCol);
 
-              const bigsmall = document.createElement('div');
-              bigsmall.classList.add('van-col', 'van-col--4');
-              bigsmall.textContent = item.bigsmall;
-              row.appendChild(bigsmall);
+            const bigsmallCol = document.createElement('div');
+            bigsmallCol.classList.add('van-col', 'van-col--4');
+            bigsmallCol.textContent = item.bigsmall;
+            row.appendChild(bigsmallCol);
 
-              const time = document.createElement('div');
-              time.classList.add('van-col', 'van-col--5');
-              time.textContent = item.time;
-              row.appendChild(time);
+            const timeCol = document.createElement('div');
+            timeCol.classList.add('van-col', 'van-col--5');
+            timeCol.textContent = item.time;
+            row.appendChild(timeCol);
 
-              const type = document.createElement('div');
-              type.classList.add('van-col', 'van-col--3');
-              type.textContent = item.type;
-              row.appendChild(type);
-              // Add more columns as needed
+            const typeCol = document.createElement('div');
+            typeCol.classList.add('van-col', 'van-col--3');
+            typeCol.textContent = item.type;
+            row.appendChild(typeCol);
 
-              listOrders.appendChild(row);
-          });
-      }
-  </script>
+            listOrders.appendChild(row);
+        });
+    }
+</script>
   <style>
     .active {
       background-color: #007bff !important;
@@ -422,19 +422,19 @@
                       </div>
                       <div class="card-body" style="padding: 0;">
                         <div class="form-group">
-                            <div class="wrap">
-                                <div class="c-tc van-row" style="text-align: center; border-bottom: 1px solid; padding: 6px;">
-                                  <div data-v-a9660e98="" class="van-col van-col--7">Periods</div>
-                                  <div data-v-a9660e98="" class="van-col van-col--5">Number</div>
-                                  <div data-v-a9660e98="" class="van-col van-col--4">Big/Small</div>
-                                  <div data-v-a9660e98="" class="van-col van-col--5">Time</div>
-                                  <div data-v-a9660e98="" class="van-col van-col--3">type</div>
-                                </div>
-                                <div id="list-orders">
-                                </div>
+                          <div class="wrap">
+                            <div class="c-tc van-row" style="text-align: center; border-bottom: 1px solid; padding: 6px;">
+                              <div class="van-col van-col--7">Periods</div>
+                              <div class="van-col van-col--5">Number</div>
+                              <div class="van-col van-col--4">Big/Small</div>
+                              <div class="van-col van-col--5">Time</div>
+                              <div class="van-col van-col--3">Type</div>
                             </div>
+                            <div id="list-orders">
+                            </div>
+                          </div>
                         </div>
-                    </div>
+                      </div>
                       <!-- <div class="card-body" style="padding: 0;">
                         <div class="form-group">
                           <div data-v-a9660e98="" class="wrap">

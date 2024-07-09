@@ -149,48 +149,78 @@ function generateUniqueID() {
      day: '2-digit',
      hour: '2-digit',
      minute: '2-digit',
-     second: '2-digit'
+     second: '2-digit',
+     timeZone: 'Asia/Kolkata'
  }).replace(',', '');
 
  // Format the time string to match "YYYY-MM-DD HH:MM:SS"
  const formattedTime = time.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s(\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
+ console.log("fomated time as ....",formattedTime)
             // console.log("time is ....",formattedTime)
             const bigsmall = result <= 4 ? 'small' : 'big';
             const status = 0;
             const singleType = 1;
             // SQL query to insert data
             const uniqueID = generateUniqueID();
-            // console.log("uniqueId .....",uniqueID)
-            console.log("1..................")
-            const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-            const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
-            // Execute the query and handle potential errors
-            connection.query(query, values, (err, results) => {
-                if (err) {
-                    console.error('Error inserting data:', err);
-                    return;
-                }
-                console.log('Data inserted:', results.insertId);
-            });
+            setInterval(() => {
+                const data = {
+                    period: uniqueID,
+                    block: block,
+                    hash: hash,
+                    result: result,
+                    bigsmall: bigsmall,
+                    time: formattedTime,
+                    status: status,
+                    type: singleType
+                };
+                
+                io.emit('data-server-trx-three-secound', { data: [data] });
+            },);
+    
+            // Store the data in the database after 7 seconds
+            setTimeout(async () => {
+                const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+                const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType];
+                connection.query(query, values, (err, results) => {
+                    if (err) {
+                        console.error('Error inserting data:', err);
+                        return;
+                    }
+                    console.log('Data inserted:', results.insertId);
+                });
+            }, 7000);
+            // console.log("1..................")
+            // const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            // const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
+            // // Execute the query and handle potential errors
+            // connection.query(query, values, (err, results) => {
+            //     if (err) {
+            //         console.error('Error inserting data:', err);
+            //         return;
+            //     }
+            //     console.log('Data inserted:', results.insertId);
+            // });
         } catch (error) {
             console.error('Error fetching data from API:', error);
         }
     });
     ////////
-    const fetchAndEmitData = async () => {
-        try {
-            const [trxgetData] = await connection.execute('SELECT * FROM trx  ORDER BY id DESC LIMIT 5', []);
-            const trxdata = trxgetData.map(item => {
-                item.hash = item.hash.slice(-4);
-                item.time = item.time.split(' ')[1];
-                return item;
-            });
-            io.emit('data-server-trx-three-secound', { data: trxdata });
-        } catch (error) {
-            console.error('Error fetching data from API:', error);
-        }
-    };
-    setInterval(fetchAndEmitData, 3000);
+    // const fetchAndEmitData = async () => {
+    //     try {
+    //         // console.log("enter in 3 secound...")
+    //         const [trxgetData] = await connection.execute('SELECT * FROM trx WHERE type=1  ORDER BY id DESC LIMIT 5', []);
+    //         const trxdata = trxgetData.map(item => {
+    //             item.hash = item.hash.slice(-4);
+    //             item.time = item.time.split(' ')[1];
+    //             return item;
+    //         });
+    //         io.emit('data-server-trx-three-secound', { data: trxdata });
+    //     } catch (error) {
+    //         console.error('Error fetching data from API:', error);
+    //     }
+    // };
+    // setInterval(fetchAndEmitData, 3000);
+
     cron.schedule('*/3 * * * *', async () => {
         try {
             const [trxgetData] = await connection.execute('SELECT * FROM trx WHERE type = 2 ORDER BY id DESC LIMIT 10', []);
