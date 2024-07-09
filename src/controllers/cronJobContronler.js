@@ -176,6 +176,37 @@ function generateUniqueID() {
         }
     });
     ////////
+    const fetchAndEmitData = async () => {
+        try {
+            console.log("Running task every 3 seconds...");
+            const [trxgetData] = await connection.execute('SELECT * FROM trx  ORDER BY id DESC LIMIT 5', []);
+            const trxdata = trxgetData.map(item => {
+                item.hash = item.hash.slice(-4);
+                item.time = item.time.split(' ')[1];
+                return item;
+            });
+            console.log("trxdata is given..",trxdata)
+            io.emit('data-server-trx-three-secound', { data: trxdata });
+        } catch (error) {
+            console.error('Error fetching data from API:', error);
+        }
+    };
+    setInterval(fetchAndEmitData, 3000);
+    // cron.schedule('3 * * * *', async () => {
+    //     try {
+    //         console.log("run data every 3 secound...")
+    //         const [trxgetData] = await connection.execute('SELECT * FROM trx WHERE type = 1 ORDER BY id DESC LIMIT 10', []);
+    //         const trxdata = trxgetData.map(item => {
+    //             item.hash = item.hash.slice(-4);
+    //             item.time = item.time.split(' ')[1];
+    //             return item;
+    //           });
+    //         // console.log("trxdata...", trxdata)
+    //         io.emit('data-server-trx', { data: trxdata });
+    //     } catch (error) {
+    //         console.error('Error fetching data from API:', error);
+    //     }
+    // });
     cron.schedule('*/3 * * * *', async () => {
         try {
             const [trxgetData] = await connection.execute('SELECT * FROM trx WHERE type = 2 ORDER BY id DESC LIMIT 10', []);
