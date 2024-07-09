@@ -156,7 +156,7 @@ function generateUniqueID() {
  const formattedTime = time.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s(\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
             // console.log("time is ....",formattedTime)
             const bigsmall = result <= 4 ? 'small' : 'big';
-            const status = 1;
+            const status = 0;
             const singleType = 1;
             // SQL query to insert data
             const uniqueID = generateUniqueID();
