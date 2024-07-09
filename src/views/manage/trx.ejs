@@ -42,7 +42,7 @@
               row.style.padding = '6px';
 
               const hashCol = document.createElement('div');
-              hashCol.classList.add('van-col', 'van-col--8');
+              hashCol.classList.add('van-col', 'van-col--7');
               hashCol.textContent = item.period;
               row.appendChild(hashCol);
 
@@ -52,7 +52,7 @@
               row.appendChild(timeCol);
 
               const bigsmall = document.createElement('div');
-              bigsmall.classList.add('van-col', 'van-col--5');
+              bigsmall.classList.add('van-col', 'van-col--4');
               bigsmall.textContent = item.bigsmall;
               row.appendChild(bigsmall);
 
@@ -60,6 +60,11 @@
               time.classList.add('van-col', 'van-col--5');
               time.textContent = item.time;
               row.appendChild(time);
+
+              const type = document.createElement('div');
+              type.classList.add('van-col', 'van-col--3');
+              type.textContent = item.type;
+              row.appendChild(type);
               // Add more columns as needed
 
               listOrders.appendChild(row);
@@ -419,10 +424,11 @@
                         <div class="form-group">
                             <div class="wrap">
                                 <div class="c-tc van-row" style="text-align: center; border-bottom: 1px solid; padding: 6px;">
-                                  <div data-v-a9660e98="" class="van-col van-col--8">Periods</div>
+                                  <div data-v-a9660e98="" class="van-col van-col--7">Periods</div>
                                   <div data-v-a9660e98="" class="van-col van-col--5">Number</div>
-                                  <div data-v-a9660e98="" class="van-col van-col--5">Big/Small</div>
-                                  <div data-v-a9660e98="" class="van-col van-col--6">Time</div>
+                                  <div data-v-a9660e98="" class="van-col van-col--4">Big/Small</div>
+                                  <div data-v-a9660e98="" class="van-col van-col--5">Time</div>
+                                  <div data-v-a9660e98="" class="van-col van-col--3">type</div>
                                 </div>
                                 <div id="list-orders">
                                 </div>
