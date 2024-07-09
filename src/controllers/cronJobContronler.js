@@ -161,6 +161,7 @@ function generateUniqueID() {
             // SQL query to insert data
             const uniqueID = generateUniqueID();
             // console.log("uniqueId .....",uniqueID)
+            console.log("1..................")
             const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
             // Execute the query and handle potential errors
@@ -248,6 +249,7 @@ function generateUniqueID() {
             const singleType = 2;
             // SQL query to insert data
             const uniqueID = generateUniqueID();
+            console.log("2..........................")
             const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
             // Execute the query and handle potential errors
@@ -327,6 +329,87 @@ function generateUniqueID() {
             // SQL query to insert data
             const uniqueID = generateUniqueID();
             console.log("uniqueId .....",uniqueID)
+            console.log("3..............................")
+            const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
+            // Execute the query and handle potential errors
+            connection.query(query, values, (err, results) => {
+                if (err) {
+                    console.error('Error inserting data:', err);
+                    return;
+                }
+                console.log('Data inserted:', results.insertId);
+            });
+        } catch (error) {
+            console.error('Error fetching data from API:', error);
+        }
+    });
+
+    cron.schedule('*/10 * * * *', async () => {
+        try {
+            console.log("cron job working 10 .........")
+            const [trxgetData] = await connection.execute('SELECT * FROM trx WHERE type = 4 ORDER BY id DESC LIMIT 10', []);
+            const trxdataTenMinute = trxgetData.map(item => {
+                // Update hash to show only the last 6 characters
+                item.hash = item.hash.slice(-4);
+              
+                // Update time to show only the time part (HH:mm:ss)
+                item.time = item.time.split(' ')[1];
+              
+                // Format period field as per your requirement
+                const formattedPeriod = `202**${item.period.toString().slice(-4)}`;
+                item.period = formattedPeriod;
+              
+                // Return the modified item
+                return item;
+              });
+            // console.log("trxdata...", trxdataFiveMinute)
+            io.emit('data-server-trxTenMinute', { data: trxdataTenMinute });
+            const [trxgetperiod] = await connection.execute('SELECT * FROM trx WHERE type = 4 ORDER BY id DESC LIMIT 1', []);
+            console.log("trxgetperiod...",trxgetperiod[0].period);
+            const trxPeriodData=trxgetperiod[0].period +1;
+            // console.log("trx period data with + 1 value ....",trxPeriodData)
+            io.emit('data-server-trxTenMinute-get-period', { data: trxPeriodData });
+            await sleep(56000);
+            const latestBlock = await fetchLatestBlock(4, 200);
+            // console.log("Latest block DATA IS ..:", latestBlock);
+            
+            console.log(".................");
+
+            const response = await axios.get('https://codunia.com/trx.php', {
+                params: {
+                    blockNumber: latestBlock
+                }
+            });
+            // Log the entire API response to debug the structure
+            console.log('API Response:', response.data);
+            const data = response.data;
+            // Extract required fields from the API response
+            const block = data.BlockHeight;
+            const hash = data.Hash;
+            const result = data.result;
+            const currentTime = new Date();
+ const adjustedTime = new Date(currentTime.getTime() - 3000);
+            // const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
+            const time = adjustedTime.toLocaleString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).replace(',', '');
+           
+            // Format the time string to match "YYYY-MM-DD HH:MM:SS"
+            const formattedTime = time.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s(\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
+            // const time = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current timestamp
+            const bigsmall = result <= 4 ? 'small' : 'big';
+            const status = 1;
+            const singleType = 4;
+            // SQL query to insert data
+            const uniqueID = generateUniqueID();
+            console.log("uniqueId .....",uniqueID)
+            console.log("4..............................")
             const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
             // Execute the query and handle potential errors
