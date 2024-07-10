@@ -162,23 +162,25 @@ function generateUniqueID() {
             const singleType = 1;
             // SQL query to insert data
             const uniqueID = generateUniqueID();
-            setInterval(() => {
+            function emitDataOnce() {
                 const data = {
                     period: uniqueID,
                     block: block,
-                    hash: hash,
                     result: result,
                     bigsmall: bigsmall,
                     time: formattedTime,
-                    status: status,
                     type: singleType
                 };
-                
+            
                 io.emit('data-server-trx-three-secound', { data: [data] });
-            },);
+                console.log('Data emitted once:', data);
+            }
+            // Emit data once when ready
+            emitDataOnce();
     
             // Store the data in the database after 7 seconds
             setTimeout(async () => {
+                console.log("a............")
                 const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
                 const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType];
                 connection.query(query, values, (err, results) => {
@@ -279,7 +281,7 @@ function generateUniqueID() {
             const singleType = 2;
             // SQL query to insert data
             const uniqueID = generateUniqueID();
-            console.log("2..........................")
+            console.log("b..........................")
             const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
             // Execute the query and handle potential errors
@@ -359,7 +361,7 @@ function generateUniqueID() {
             // SQL query to insert data
             const uniqueID = generateUniqueID();
             console.log("uniqueId .....",uniqueID)
-            console.log("3..............................")
+            console.log("c..............................")
             const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
             // Execute the query and handle potential errors
@@ -439,7 +441,7 @@ function generateUniqueID() {
             // SQL query to insert data
             const uniqueID = generateUniqueID();
             console.log("uniqueId .....",uniqueID)
-            console.log("4..............................")
+            console.log("d..............................")
             const query = 'INSERT INTO trx (period, block, hash, result, bigsmall, time, status,type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const values = [uniqueID, block, hash, result, bigsmall, formattedTime, status, singleType]; // Assuming period can be null or auto-increment
             // Execute the query and handle potential errors
